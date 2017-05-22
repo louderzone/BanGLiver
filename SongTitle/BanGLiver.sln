@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26403.7
+VisualStudioVersion = 15.0.26430.6
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BanGDreamLiver", "BanGDreamLiver\BanGDreamLiver.csproj", "{72644970-5F43-4432-B447-F86FC7F35DCB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BanGLiver", "BanGDreamLiver\BanGLiver.csproj", "{72644970-5F43-4432-B447-F86FC7F35DCB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

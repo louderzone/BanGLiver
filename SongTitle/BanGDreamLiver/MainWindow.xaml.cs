@@ -5,7 +5,7 @@ using System;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 
-namespace BanGDreamLiver
+namespace BanGLiver
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
