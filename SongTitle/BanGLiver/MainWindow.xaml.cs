@@ -13,9 +13,9 @@ namespace BanGLiver
         FileSystemWatcher requestWatcher = new FileSystemWatcher();
 
         private String SongInfo = "";
-        private String displayText_IDLE = "BanG-Liver Now Playing info";
-        private String displayText_WAIT = "Waiting for Live...";
-        private bool isLaunched;
+        private String DisplayText_IDLE = "BanG-Liver Now Playing info";
+        private String DisplayText_WAIT = "Waiting for Live...";
+        private bool IsLaunched;
 
         bool IsPlaying = false;
         public MainWindow()
@@ -25,16 +25,16 @@ namespace BanGLiver
             requestWatcher.NotifyFilter = NotifyFilters.LastWrite;
             requestWatcher.Filter = "requestBody.txt";
             requestWatcher.Changed += new FileSystemEventHandler(OnChanged);
-            SetText(displayText_IDLE);
-            isLaunched = false;
+            SetText(DisplayText_IDLE);
+            IsLaunched = false;
         }
 
         private void StartButton_Click(object sender, RoutedEventArgs e)
         {
-            isLaunched = !isLaunched;
-            requestWatcher.EnableRaisingEvents = isLaunched;
-            StartButton.Content = isLaunched ? "ストップ" : "スタート";
-            SetText(isLaunched ? displayText_WAIT : displayText_IDLE);
+            IsLaunched = !IsLaunched;
+            requestWatcher.EnableRaisingEvents = IsLaunched;
+            StartButton.Content = IsLaunched ? "ストップ" : "スタート";
+            SetText(IsLaunched ? DisplayText_WAIT : DisplayText_IDLE);
             /*if(StartButton.Content.ToString() == "Start")
             {
                 requestWatcher.EnableRaisingEvents = true;
