@@ -1,9 +1,7 @@
 ﻿using System.Windows;
-using Fiddler;
 using System.IO;
 using System;
 using Newtonsoft.Json;
-using System.Collections.Generic;
 
 namespace BanGLiver
 {
@@ -15,6 +13,10 @@ namespace BanGLiver
         FileSystemWatcher requestWatcher = new FileSystemWatcher();
 
         private String SongInfo = "";
+        private String displayText_IDLE = "BanG-Liver Now Playing info";
+        private String displayText_WAIT = "Waiting for Live...";
+        private bool isLaunched;
+
         bool IsPlaying = false;
         public MainWindow()
         {
@@ -23,23 +25,28 @@ namespace BanGLiver
             requestWatcher.NotifyFilter = NotifyFilters.LastWrite;
             requestWatcher.Filter = "requestBody.txt";
             requestWatcher.Changed += new FileSystemEventHandler(OnChanged);
-            SetText("BanG-Liver Now Playing info");
+            SetText(displayText_IDLE);
+            isLaunched = false;
         }
 
         private void StartButton_Click(object sender, RoutedEventArgs e)
         {
-            if(StartButton.Content.ToString() == "Start")
+            isLaunched = !isLaunched;
+            requestWatcher.EnableRaisingEvents = isLaunched;
+            StartButton.Content = isLaunched ? "ストップ" : "スタート";
+            SetText(isLaunched ? displayText_WAIT : displayText_IDLE);
+            /*if(StartButton.Content.ToString() == "Start")
             {
                 requestWatcher.EnableRaisingEvents = true;
                 StartButton.Content = "Stop";
-                SetText("Waiting for Live...");
+                SetText(displayText_WAIT);
             }
             else
             {
                 requestWatcher.EnableRaisingEvents = false;
                 StartButton.Content = "Start";
-                SetText("BanG-Liver Now Playing info");
-            }
+                SetText(displayText_IDLE);
+            }*/
         }
 
         private void OnChanged(object source, FileSystemEventArgs e)
@@ -54,7 +61,7 @@ namespace BanGLiver
                     if (jsonData.events[0].p1 != null)
                     {
                         SongInfo = jsonData.events[0].p1 + " [" + ((string)jsonData.events[0].p2).ToUpper() + "]";
-                        SetText("再生：" + SongInfo);
+                        SetText("再生中：" + SongInfo);
                         IsPlaying = true;
                     }
                     else if(IsPlaying){
