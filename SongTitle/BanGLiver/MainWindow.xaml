@@ -5,17 +5,21 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BanGLiver"
         mc:Ignorable="d"
-        Title="バンドリ！ガルパ！ - ライブディスプレイ By 冬雪桜" Height="90" Width="525" ResizeMode="NoResize">
-    <Grid Margin="5">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition Width="50"/>
-        </Grid.ColumnDefinitions>
+        Title="バンドリ！ガルパ！ - ライブディスプレイ By 冬雪桜" Height="800" Width="525" ResizeMode="NoResize">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid Margin="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="50"/>
+            </Grid.ColumnDefinitions>
 
-        <TextBox x:Name="NowPlaying" IsEnabled="False" Text="再生中..." HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="0,0,5,0" />
-        
-        <Button x:Name="StartButton" Grid.Column="1" Content="スタート" Click="StartButton_Click" Margin="0" />
-        
-        
+            <TextBox x:Name="NowPlaying" IsEnabled="False" Text="再生中..." HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="0,0,5,0" />
+            <Button x:Name="StartButton" Grid.Column="1" Content="スタート" Click="StartButton_Click" Margin="0" />
+
+        </Grid>
     </Grid>
 </Window>
