@@ -1,86 +1,86 @@
 ﻿using System.Windows;
 using System.IO;
 using System;
+using System.Diagnostics;
+using System.Linq;
+using BanGLiver.Extension;
+using BanGLiver.Modal.BangDream;
 using Newtonsoft.Json;
 
 namespace BanGLiver
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
-        FileSystemWatcher requestWatcher = new FileSystemWatcher();
+        private FileSystemWatcher RequestWatcher { get; }= new FileSystemWatcher();
 
-        private String SongInfo = "";
-        private String DisplayText_IDLE = "BanG-Liver Now Playing info";
-        private String DisplayText_WAIT = "Waiting for Live...";
-        private bool IsLaunched;
+        private string _songInfo = "";
+        private readonly string _textIdle = "BanG-Liver Now Playing info";
+        private readonly string _textWait = "Waiting for Live data...";
+        private bool _isLaunched;
+        private bool _isPlaying;
 
-        bool IsPlaying = false;
         public MainWindow()
         {
             InitializeComponent();
-            requestWatcher.Path = "C:\\Temp";
-            requestWatcher.NotifyFilter = NotifyFilters.LastWrite;
-            requestWatcher.Filter = "requestBody.txt";
-            requestWatcher.Changed += new FileSystemEventHandler(OnChanged);
-            SetText(DisplayText_IDLE);
-            IsLaunched = false;
+            RequestWatcher.Path = @"C:\Temp";
+            RequestWatcher.NotifyFilter = NotifyFilters.LastWrite;
+            RequestWatcher.Filter = "requestBody.txt";
+            RequestWatcher.Changed += RequestBody_OnChanged;
+            SetText(_textIdle);
+            _isLaunched = false;
         }
 
         private void StartButton_Click(object sender, RoutedEventArgs e)
         {
-            IsLaunched = !IsLaunched;
-            requestWatcher.EnableRaisingEvents = IsLaunched;
-            StartButton.Content = IsLaunched ? "ストップ" : "スタート";
-            SetText(IsLaunched ? DisplayText_WAIT : DisplayText_IDLE);
-            /*if(StartButton.Content.ToString() == "Start")
-            {
-                requestWatcher.EnableRaisingEvents = true;
-                StartButton.Content = "Stop";
-                SetText(displayText_WAIT);
-            }
-            else
-            {
-                requestWatcher.EnableRaisingEvents = false;
-                StartButton.Content = "Start";
-                SetText(displayText_IDLE);
-            }*/
+            _isLaunched = !_isLaunched;
+            RequestWatcher.EnableRaisingEvents = _isLaunched;
+            StartButton.Content = _isLaunched ? "ストップ" : "スタート";
+            SetText(_isLaunched ? _textWait : _textIdle);
         }
 
-        private void OnChanged(object source, FileSystemEventArgs e)
+        /// <summary>
+        /// Handles file watcher request body on changed
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="e"></param>
+        private void RequestBody_OnChanged(object source, FileSystemEventArgs e)
         {
             try {
-                using (StreamReader sr = new StreamReader(e.FullPath.ToString()))
+                using (var sr = new StreamReader(e.FullPath))
                 {
                     // Read the stream to a string, and write the string to the console.
-                    String data = sr.ReadToEnd();
-                    var jsonData = JsonConvert.DeserializeObject<dynamic>(data);
+                    var text = sr.ReadToEnd();
+                    var jsonData = text.JsonDeserialize<TapjoyRequest>();
 
-                    if (jsonData.events[0].p1 != null)
+                    if (jsonData.Events.Any())
                     {
-                        SongInfo = jsonData.events[0].p1 + " [" + ((string)jsonData.events[0].p2).ToUpper() + "]";
-                        SetText("再生中：" + SongInfo);
-                        IsPlaying = true;
+                        // Has event
+                        var tapjoyEvent = jsonData.Events.First();
+                        _songInfo = $"{tapjoyEvent.P1} [{tapjoyEvent.P2.ToUpper()}]";
+                        SetText("再生中：" + _songInfo);
+                        _isPlaying = true;
                     }
-                    else if(IsPlaying){
-                        SetText("済む：" + SongInfo);
-                        IsPlaying = false;
+                    else if(_isPlaying){
+                        SetText("済む：" + _songInfo);
+                        _isPlaying = false;
                     }
                 
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Debug.WriteLine(ex.Message);
             }
         }
 
-        private void SetText(String text)
+        /// <summary>
+        /// Procress text and save text for display
+        /// </summary>
+        /// <param name="text"></param>
+        private void SetText(string text)
         {
-            System.IO.File.WriteAllText(@"C:\Temp\bdg_now_playing.txt", text + "          ");
-            this.Dispatcher.Invoke(() =>
+            File.WriteAllText(@"C:\Temp\bdg_now_playing.txt", $@"{text}          ");
+            Dispatcher.Invoke(() =>
             {
                 NowPlaying.Text = text;
             });
